@@ -1,24 +1,27 @@
+import type { TopTableData } from "../domain";
 import { useTable } from "../model/useTable";
 import { TableLayout } from "../ui/layout";
 import { TableLeg } from "../ui/table-leg";
 import { TableTop } from "../ui/table-top";
 
 export function TableSquare({
-  value,
   animate,
+  topTableData,
 }: {
-  value: number;
   animate: boolean;
+  topTableData: TopTableData;
 }) {
-  const { legsData, tableTopData } = useTable({ value });
+  const { legsData } = useTable({ topTableData });
 
   return (
-    <TableLayout
-      animated={animate}
-      tableTop={<TableTop value={tableTopData} />}
-      legs={legsData.map((leg) => (
-        <TableLeg key={leg.type} position={leg.values} />
-      ))}
-    />
+    <>
+      <TableLayout
+        tableTop={<TableTop value={topTableData} />}
+        legs={legsData.map((leg) => (
+          <TableLeg key={leg.type} position={leg.values} />
+        ))}
+        animated={animate}
+      />
+    </>
   );
 }

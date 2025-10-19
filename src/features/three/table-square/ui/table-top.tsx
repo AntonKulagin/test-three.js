@@ -1,9 +1,10 @@
 import { RoundedBox } from "@react-three/drei";
+import type { TopTableData } from "../domain";
 
-export function TableTop({ value }: { value: number }) {
+export function TableTop({ value }: { value: TopTableData }) {
   return (
     <RoundedBox
-      args={[value, 0.2, 2]}
+      args={[value.length, 0.2, value.width]}
       radius={0.04}
       castShadow
       receiveShadow

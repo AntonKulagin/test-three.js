@@ -1,9 +1,12 @@
-import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment, Grid } from "@react-three/drei";
 import * as THREE from "three";
-import { TableSquare } from "../features/three/table-square";
+import {
+  TableSquare,
+  TableSquareManager,
+} from "../features/three/table-square";
 import { Floor } from "../features/three/floor";
+import { useState } from "react";
 
 // Основной компонент сцены
 const TableScene = ({
@@ -17,18 +20,13 @@ const TableScene = ({
   environment?: "city" | "sunset" | "dawn" | "night" | "warehouse" | "park";
   enableAnimation?: boolean;
 }) => {
-  const [value, setValue] = useState<number>(4);
+  const [topTableData, setTopTableData] = useState({ length: 4, width: 2 });
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      <input
-        type="range"
-        min={2}
-        max={6}
-        step={0.1}
-        value={value}
-        onChange={(e) => setValue(Number(e.target.value))}
-        style={{ position: "absolute", top: "10px", left: "10px", zIndex: 10 }}
+      <TableSquareManager
+        topTableData={topTableData}
+        onChange={setTopTableData}
       />
       <Canvas
         shadows
@@ -80,7 +78,7 @@ const TableScene = ({
         )}
 
         {/* Стол */}
-        <TableSquare animate={enableAnimation} value={value} />
+        <TableSquare animate={enableAnimation} topTableData={topTableData} />
 
         {/* Окружающая среда */}
         <Environment preset={environment} />

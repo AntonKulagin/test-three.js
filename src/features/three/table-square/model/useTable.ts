@@ -1,47 +1,38 @@
-import { getLegPosition, type Leg } from "../domain";
+import { getLegPosition, type Leg, type TopTableData } from "../domain";
 
-export function useTable({
-  value,
-}: // defaultValue = 4,
-{
-  value: number;
-  // defaultValue?: number;
-}) {
+export function useTable({ topTableData }: { topTableData: TopTableData }) {
   const legs: Leg[] = [
     {
       type: "frontRight",
       values: getLegPosition("frontRight", {
-        lengthTable: value,
-        // defaultValue,
+        lengthTable: topTableData.length,
+        widthTable: topTableData.width,
       }),
     },
     {
       type: "backRight",
       values: getLegPosition("backRight", {
-        lengthTable: value,
-        // defaultValue,
+        lengthTable: topTableData.length,
+        widthTable: topTableData.width,
       }),
     },
     {
       type: "frontLeft",
       values: getLegPosition("frontLeft", {
-        lengthTable: value,
-        // defaultValue,
+        lengthTable: topTableData.length,
+        widthTable: topTableData.width,
       }),
     },
     {
       type: "backLeft",
       values: getLegPosition("backLeft", {
-        lengthTable: value,
-        // defaultValue,
+        lengthTable: topTableData.length,
+        widthTable: topTableData.width,
       }),
     },
   ];
 
-  const tableTop = value;
-
   return {
     legsData: legs,
-    tableTopData: tableTop,
   };
 }
