@@ -7,6 +7,8 @@ import {
 } from "../features/three/table-square";
 import { Floor } from "../features/three/floor";
 import { useState } from "react";
+import { useWebGl } from "../shared/lib/check-webgl";
+import { useDeviceDetect } from "../shared/lib/react";
 
 // Основной компонент сцены
 const TableScene = ({
@@ -21,6 +23,10 @@ const TableScene = ({
   enableAnimation?: boolean;
 }) => {
   const [topTableData, setTopTableData] = useState({ length: 4, width: 2 });
+  const { isWebGLSupported, WebGlErrorMessage } = useWebGl();
+  const { isMobile } = useDeviceDetect();
+
+  if (!isWebGLSupported) return <WebGlErrorMessage />;
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
@@ -30,24 +36,31 @@ const TableScene = ({
       />
       <Canvas
         shadows
+        dpr={
+          isMobile
+            ? Math.min(1.5, window.devicePixelRatio)
+            : window.devicePixelRatio
+        } // Ограничиваем DPR для мобильных
         camera={{
           position: [5, 5, 5] as [number, number, number],
-          fov: 75,
+          fov: isMobile ? 60 : 75, // Уменьшаем FOV для мобильных
           near: 0.1,
           far: 1000,
         }}
         gl={{
-          antialias: true,
+          antialias: !isMobile, // Отключаем сглаживание на мобильных
+          powerPreference: "high-performance", // Приоритет производительности
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1,
         }}
+        performance={{ min: 0.5 }} // Минимальная производительность 50%
       >
         {/* Освещение */}
         <ambientLight intensity={0.6} />
         <directionalLight
           position={[10, 20, 5] as [number, number, number]}
           intensity={0.8}
-          castShadow
+          castShadow={!isMobile} // Отключаем тени на мобильных для производительности
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-far={50}
@@ -78,20 +91,27 @@ const TableScene = ({
         )}
 
         {/* Стол */}
-        <TableSquare animate={enableAnimation} topTableData={topTableData} />
+        <TableSquare
+          animate={enableAnimation && !isMobile} // Отключаем анимацию на мобильных
+          topTableData={topTableData}
+        />
 
         {/* Окружающая среда */}
-        <Environment preset={environment} />
+        <Environment preset={environment} background={!isMobile} />
 
         {/* Управление камерой */}
         <OrbitControls
           enablePan={true}
           enableZoom={true}
-          enableRotate={true}
-          minDistance={3}
-          maxDistance={20}
+          minDistance={isMobile ? 5 : 3}
+          maxDistance={isMobile ? 30 : 20}
           maxPolarAngle={Math.PI / 2}
           target={[0, 1, 0]}
+          dampingFactor={0.1}
+          touches={{
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.DOLLY_PAN,
+          }}
         />
 
         {/* Вспомогательные оси */}

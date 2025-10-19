@@ -10,3 +10,21 @@ html {
   margin: 0;
   padding: 0;
 }
+
+@media (max-width: 768px) {
+  .three-container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Улучшаем производительность на старых Android */
+  canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+  }
+}
+
+/* Предотвращаем масштабирование при двойном тапе */
+* {
+  -webkit-user-scalable: none;
+  -moz-user-scalable: none;
+}
